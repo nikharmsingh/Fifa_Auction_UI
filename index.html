@@ -1064,81 +1064,72 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
         "Pervis Estupinan": "images/Pervis_Estupinan.jpg"
     };
     // Try to use _card.png if available, else fallback to .jpg, else avatar
+    let lastRenderedOwner = null;
     function renderSquadTable(owner) {
+        if (lastRenderedOwner === owner) return; // Avoid unnecessary re-render
+        lastRenderedOwner = owner;
         const squad = players.filter(p => p.Owner === owner);
         const tbody = document.querySelector('#squadTable tbody');
-        tbody.innerHTML = squad.map((p, idx) => {
+        tbody.innerHTML = '';
+        const fragment = document.createDocumentFragment();
+        squad.forEach((p, idx) => {
             const baseName = p['Player Name'];
             let imgUrl = playerImages[baseName];
             let showImage = false;
-            // Only show image if it's a local file (not an avatar URL)
             if (imgUrl && !imgUrl.startsWith('https://ui-avatars.com/api/')) {
                 showImage = true;
             } else {
                 imgUrl = '';
             }
             const initials = baseName.split(' ').map(w => w[0]).join('').toUpperCase();
-            return `
-            <tr class="player-row" data-player-idx="${idx}">
+            const tr = document.createElement('tr');
+            tr.className = 'player-row';
+            tr.setAttribute('data-player-idx', idx);
+            tr.innerHTML = `
                 <td>
-                    ${showImage ? `<img class="player-img" src="${imgUrl}" alt="Player">` : `<div class="player-img initials-avatar">${initials}</div>`}
+                    ${showImage ? `<img class="player-img" src="${imgUrl}" alt="Player" loading="lazy" width="68" height="68">` : `<div class="player-img initials-avatar">${initials}</div>`}
                 </td>
                 <td>${p['Player Name']}</td>
                 <td>${p['Rating']}</td>
                 <td>${p['Position']}</td>
                 <td>₹${parseFloat(p['Purchase Price']).toLocaleString()}</td>
-            </tr>
             `;
-        }).join('');
-        // Add click event to each row
-        Array.from(tbody.querySelectorAll('.player-row')).forEach(row => {
-            row.onclick = function() {
-                const idx = parseInt(this.getAttribute('data-player-idx'));
-                showPlayerModal(squad[idx]);
-            };
+            fragment.appendChild(tr);
         });
+        tbody.appendChild(fragment);
     }
-    // Player modal logic
-    function showPlayerModal(player) {
-        const modal = document.getElementById('playerModal');
-        const overlay = document.getElementById('playerModalOverlay');
-        const img = document.getElementById('modalPlayerImg');
-        const initialsDiv = document.getElementById('modalInitials');
-        const name = document.getElementById('modalPlayerName');
-        const rating = document.getElementById('modalPlayerRating');
-        const position = document.getElementById('modalPlayerPosition');
-        const owner = document.getElementById('modalPlayerOwner');
-        const price = document.getElementById('modalPlayerPrice');
-        // Set content
-        name.textContent = player['Player Name'];
-        rating.textContent = `Rating: ${player['Rating']}`;
-        position.textContent = `Position: ${player['Position']}`;
-        owner.textContent = `Owner: ${player['Owner']}`;
-        price.textContent = `Purchase Price: ₹${parseFloat(player['Purchase Price']).toLocaleString()}`;
-        // Image/initials
-        let imgUrl = playerImages[player['Player Name']];
-        if (imgUrl && !imgUrl.startsWith('https://ui-avatars.com/api/')) {
-            img.src = imgUrl;
-            img.style.display = 'block';
-            initialsDiv.style.display = 'none';
-        } else {
-            img.src = '';
-            img.style.display = 'none';
-            initialsDiv.textContent = player['Player Name'].split(' ').map(w => w[0]).join('').toUpperCase();
-            initialsDiv.style.display = 'flex';
+    // Event delegation for player row clicks
+    const squadTable = document.getElementById('squadTable');
+    squadTable.addEventListener('click', function(e) {
+        let row = e.target.closest('.player-row');
+        if (row) {
+            const owner = document.getElementById('squadOwner').value;
+            const squad = players.filter(p => p.Owner === owner);
+            const idx = parseInt(row.getAttribute('data-player-idx'));
+            showPlayerModal(squad[idx]);
         }
-        modal.classList.remove('hidden');
-        overlay.classList.remove('hidden');
+    });
+    // Only render extra charts when Charts tab is visible, destroy when hidden
+    function showChartsTab() {
+        const auctionPage = document.getElementById('auctionPage');
+        const squadPage = document.getElementById('squadPage');
+        const chartsPage = document.getElementById('chartsPage');
+        auctionPage.classList.add('hidden');
+        squadPage.classList.add('hidden');
+        chartsPage.classList.remove('hidden');
+        renderExtraCharts();
     }
-    document.getElementById('modalCloseBtn').onclick = closePlayerModal;
-    document.getElementById('playerModalOverlay').onclick = closePlayerModal;
-    function closePlayerModal() {
-        document.getElementById('playerModal').classList.add('hidden');
-        document.getElementById('playerModalOverlay').classList.add('hidden');
+    function hideChartsTab() {
+        const chartsPage = document.getElementById('chartsPage');
+        chartsPage.classList.add('hidden');
+        // Destroy extra charts if exist
+        if (window.spendByPositionChart && typeof window.spendByPositionChart.destroy === 'function') window.spendByPositionChart.destroy();
+        if (window.avgPriceByPositionChart && typeof window.avgPriceByPositionChart.destroy === 'function') window.avgPriceByPositionChart.destroy();
+        if (window.ownerSpendDoughnut && typeof window.ownerSpendDoughnut.destroy === 'function') window.ownerSpendDoughnut.destroy();
+        if (window.topPlayersChart && typeof window.topPlayersChart.destroy === 'function') window.topPlayersChart.destroy();
     }
-    // Event listeners
+    // Update event listeners for tabs
     function setupEventListeners() {
-        // Navigation
         const auctionTab = document.getElementById('auctionTab');
         const squadTab = document.getElementById('squadTab');
         const chartsTab = document.getElementById('chartsTab');
@@ -1146,53 +1137,44 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
         const squadPage = document.getElementById('squadPage');
         const chartsPage = document.getElementById('chartsPage');
         const squadOwner = document.getElementById('squadOwner');
-
         if (auctionTab) {
             auctionTab.onclick = function() {
-                console.log('Auction tab clicked');
                 if (auctionPage) auctionPage.classList.remove('hidden');
                 if (squadPage) squadPage.classList.add('hidden');
-                if (chartsPage) chartsPage.classList.add('hidden');
+                hideChartsTab();
                 this.classList.add('active');
                 if (squadTab) squadTab.classList.remove('active');
                 if (chartsTab) chartsTab.classList.remove('active');
             };
         }
-
         if (squadTab) {
             squadTab.onclick = function() {
-                console.log('Squad tab clicked');
                 if (auctionPage) auctionPage.classList.add('hidden');
                 if (squadPage) squadPage.classList.remove('hidden');
-                if (chartsPage) chartsPage.classList.add('hidden');
+                hideChartsTab();
                 this.classList.add('active');
                 if (auctionTab) auctionTab.classList.remove('active');
                 if (chartsTab) chartsTab.classList.remove('active');
-                // Always refresh owner list and squad table
                 renderSquadOwnerList();
                 const owner = (squadOwner && squadOwner.value) || players[0]?.Owner || '';
                 renderSquadTable(owner);
             };
         }
-
         if (chartsTab) {
             chartsTab.onclick = function() {
-                console.log('Charts tab clicked');
-                if (auctionPage) auctionPage.classList.add('hidden');
-                if (squadPage) squadPage.classList.add('hidden');
-                if (chartsPage) chartsPage.classList.remove('hidden');
+                showChartsTab();
                 this.classList.add('active');
                 if (auctionTab) auctionTab.classList.remove('active');
                 if (squadTab) squadTab.classList.remove('active');
-                // Always refresh extra charts
-                renderExtraCharts();
             };
         }
-
-        // Squad owner select
         if (squadOwner) {
+            let debounceTimeout;
             squadOwner.addEventListener('change', function() {
-                renderSquadTable(this.value);
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(() => {
+                    renderSquadTable(this.value);
+                }, 100);
             });
         }
     }
