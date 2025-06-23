@@ -325,6 +325,97 @@
             color: #181c24;
             box-shadow: 0 4px 24px #39ff1444;
         }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(24,28,36,0.85);
+            z-index: 1001;
+            backdrop-filter: blur(2.5px);
+            transition: opacity 0.2s;
+        }
+        .player-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            background: linear-gradient(135deg, #232a34 80%, #232a34cc 100%);
+            border-radius: 22px;
+            box-shadow: 0 8px 48px #39ff1444, 0 2px 16px #00ff4133;
+            padding: 36px 32px 28px 32px;
+            min-width: 320px;
+            max-width: 96vw;
+            min-height: 220px;
+            z-index: 1002;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .player-modal.hidden, .modal-overlay.hidden {
+            display: none !important;
+        }
+        .modal-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 32px;
+        }
+        .modal-img-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .player-modal img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid #39ff14;
+            background: #181c24;
+            object-fit: cover;
+            box-shadow: 0 2px 12px #39ff1444;
+        }
+        .player-modal .player-img.initials-avatar {
+            width: 110px;
+            height: 110px;
+            font-size: 2.8em;
+            border-width: 3px;
+            margin: 0;
+        }
+        .modal-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .modal-info h2 {
+            margin: 0 0 8px 0;
+            font-size: 2em;
+            color: #39ff14;
+            text-shadow: 0 2px 8px #00ff4133;
+        }
+        .modal-meta {
+            color: #b6c6e3;
+            font-size: 1.15em;
+            margin-bottom: 2px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 18px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2.2em;
+            font-weight: 900;
+            cursor: pointer;
+            z-index: 1003;
+            transition: color 0.18s;
+        }
+        .modal-close:hover {
+            color: #39ff14;
+        }
+        @media (max-width: 700px) {
+            .player-modal { padding: 18px 4vw; }
+            .modal-content { flex-direction: column; gap: 18px; }
+            .player-modal img, .player-modal .player-img.initials-avatar { width: 70px; height: 70px; font-size: 1.5em; }
+        }
     </style>
     <!-- PapaParse CDN for CSV parsing -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -401,6 +492,29 @@
     </div>
     <div class="footer">
         Made with <span class="material-icons" style="font-size:1.1em;color:#3a86ff;vertical-align:middle;">favorite</span> for Sasta Fifa Tournament &copy; 2025
+    </div>
+    <!-- Player Detail Modal -->
+    <div id="playerModalOverlay" class="modal-overlay hidden"></div>
+    <div id="playerModal" class="player-modal hidden">
+        <button class="modal-close" id="modalCloseBtn" title="Close">&times;</button>
+        <div class="modal-content">
+            <div class="modal-img-wrap">
+                <img id="modalPlayerImg" src="" alt="Player" onerror="this.style.display='none';document.getElementById('modalInitials').style.display='flex';">
+                <div id="modalInitials" class="player-img initials-avatar" style="display:none;"></div>
+            </div>
+            <div class="modal-info">
+                <h2 id="modalPlayerName"></h2>
+                <div class="modal-meta">
+                    <span id="modalPlayerRating"></span> | <span id="modalPlayerPosition"></span>
+                </div>
+                <div class="modal-meta">
+                    <span id="modalPlayerOwner"></span>
+                </div>
+                <div class="modal-meta" style="margin-top:8px;">
+                    <span id="modalPlayerPrice"></span>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
     let players = [];
@@ -953,7 +1067,7 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
     function renderSquadTable(owner) {
         const squad = players.filter(p => p.Owner === owner);
         const tbody = document.querySelector('#squadTable tbody');
-        tbody.innerHTML = squad.map(p => {
+        tbody.innerHTML = squad.map((p, idx) => {
             const baseName = p['Player Name'];
             let imgUrl = playerImages[baseName];
             let showImage = false;
@@ -965,7 +1079,7 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
             }
             const initials = baseName.split(' ').map(w => w[0]).join('').toUpperCase();
             return `
-            <tr>
+            <tr class="player-row" data-player-idx="${idx}">
                 <td>
                     ${showImage ? `<img class="player-img" src="${imgUrl}" alt="Player">` : `<div class="player-img initials-avatar">${initials}</div>`}
                 </td>
@@ -976,15 +1090,52 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
             </tr>
             `;
         }).join('');
+        // Add click event to each row
+        Array.from(tbody.querySelectorAll('.player-row')).forEach(row => {
+            row.onclick = function() {
+                const idx = parseInt(this.getAttribute('data-player-idx'));
+                showPlayerModal(squad[idx]);
+            };
+        });
     }
-    // Helper to check if image exists (synchronously, only works for local files)
-    function imageExists(url) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('HEAD', url, false);
-        xhr.send();
-        return xhr.status === 200;
+    // Player modal logic
+    function showPlayerModal(player) {
+        const modal = document.getElementById('playerModal');
+        const overlay = document.getElementById('playerModalOverlay');
+        const img = document.getElementById('modalPlayerImg');
+        const initialsDiv = document.getElementById('modalInitials');
+        const name = document.getElementById('modalPlayerName');
+        const rating = document.getElementById('modalPlayerRating');
+        const position = document.getElementById('modalPlayerPosition');
+        const owner = document.getElementById('modalPlayerOwner');
+        const price = document.getElementById('modalPlayerPrice');
+        // Set content
+        name.textContent = player['Player Name'];
+        rating.textContent = `Rating: ${player['Rating']}`;
+        position.textContent = `Position: ${player['Position']}`;
+        owner.textContent = `Owner: ${player['Owner']}`;
+        price.textContent = `Purchase Price: ₹${parseFloat(player['Purchase Price']).toLocaleString()}`;
+        // Image/initials
+        let imgUrl = playerImages[player['Player Name']];
+        if (imgUrl && !imgUrl.startsWith('https://ui-avatars.com/api/')) {
+            img.src = imgUrl;
+            img.style.display = 'block';
+            initialsDiv.style.display = 'none';
+        } else {
+            img.src = '';
+            img.style.display = 'none';
+            initialsDiv.textContent = player['Player Name'].split(' ').map(w => w[0]).join('').toUpperCase();
+            initialsDiv.style.display = 'flex';
+        }
+        modal.classList.remove('hidden');
+        overlay.classList.remove('hidden');
     }
-
+    document.getElementById('modalCloseBtn').onclick = closePlayerModal;
+    document.getElementById('playerModalOverlay').onclick = closePlayerModal;
+    function closePlayerModal() {
+        document.getElementById('playerModal').classList.add('hidden');
+        document.getElementById('playerModalOverlay').classList.add('hidden');
+    }
     // Event listeners
     function setupEventListeners() {
         // Navigation
