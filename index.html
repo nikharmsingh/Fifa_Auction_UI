@@ -222,7 +222,7 @@
             flex-wrap: wrap;
             gap: 36px;
             justify-content: space-around;
-            margin: 36px 0 0 0;
+            margin: 36
         }
         .chart-card {
             background: linear-gradient(135deg, #232a34 60%, #232a34cc 100%);
@@ -1100,15 +1100,18 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
     }
     // Event delegation for player row clicks
     const squadTable = document.getElementById('squadTable');
-    squadTable.addEventListener('click', function(e) {
-        let row = e.target.closest('.player-row');
-        if (row) {
-            const owner = document.getElementById('squadOwner').value;
-            const squad = players.filter(p => p.Owner === owner);
-            const idx = parseInt(row.getAttribute('data-player-idx'));
-            showPlayerModal(squad[idx]);
-        }
-    });
+squadTable.addEventListener('click', function(e) {
+    let row = e.target.closest('.player-row');
+    if (row) {
+        const cells = row.children;
+        const playerName = cells[1]?.textContent;
+        const playerRating = cells[2]?.textContent;
+        const owner = document.getElementById('squadOwner').value;
+        // Find player by name, rating, and owner for uniqueness
+        const player = players.find(p => p['Player Name'] === playerName && p.Owner === owner && p['Rating'] == playerRating);
+        if (player) showPlayerModal(player);
+    }
+});
     // Only render extra charts when Charts tab is visible, destroy when hidden
     function showChartsTab() {
         const auctionPage = document.getElementById('auctionPage');
@@ -1179,22 +1182,66 @@ Franck Kessie,84,CM,Nikhar,1.5,Sold`;
         }
     }
 
-    // Fetch and parse CSV, then render dashboard
-    function loadCSVAndRender() {
-        players = parseCSV(csvData);
-        renderSummary();
-        renderTopSpenders();
-        renderCharts();
-        renderSquadOwnerList();
-        renderSquadTable(players[0]?.Owner || '');
-        renderExtraCharts();
-        // Do NOT call setupEventListeners here
+    // --- Player Modal Logic ---
+function showPlayerModal(player) {
+    // Set player name
+    document.getElementById('modalPlayerName').textContent = player['Player Name'];
+    // Set rating and position
+    document.getElementById('modalPlayerRating').textContent = `Rating: ${player['Rating']}`;
+    document.getElementById('modalPlayerPosition').textContent = player['Position'];
+    document.getElementById('modalPlayerOwner').textContent = `Owner: ${player.Owner}`;
+    document.getElementById('modalPlayerPrice').textContent = `Price: ₹${parseFloat(player['Purchase Price']).toLocaleString()}`;
+    // Set player image or initials
+    const imgElem = document.getElementById('modalPlayerImg');
+    const initialsElem = document.getElementById('modalInitials');
+    let imgUrl = playerImages[player['Player Name']];
+    if (imgUrl) {
+        imgElem.src = imgUrl;
+        imgElem.style.display = '';
+        initialsElem.style.display = 'none';
+    } else {
+        imgElem.style.display = 'none';
+        initialsElem.textContent = player['Player Name'].split(' ').map(w => w[0]).join('').toUpperCase();
+        initialsElem.style.display = 'flex';
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        loadCSVAndRender();
-        setupEventListeners();
-    });
+    // Show modal and overlay
+    document.getElementById('playerModal').classList.remove('hidden');
+    document.getElementById('playerModalOverlay').classList.remove('hidden');
+}
+// Modal close logic
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+const modalOverlay = document.getElementById('playerModalOverlay');
+if (modalCloseBtn) {
+    modalCloseBtn.onclick = function() {
+        document.getElementById('playerModal').classList.add('hidden');
+        document.getElementById('playerModalOverlay').classList.add('hidden');
+    };
+}
+if (modalOverlay) {
+    modalOverlay.onclick = function() {
+        document.getElementById('playerModal').classList.add('hidden');
+        document.getElementById('playerModalOverlay').classList.add('hidden');
+    };
+}
+// --- FIX: Add loadCSVAndRender implementation ---
+function loadCSVAndRender() {
+    players = parseCSV(csvData);
+    renderSummary();
+    renderTopSpenders();
+    renderCharts();
+    renderSquadOwnerList();
+    // Render initial squad table for first owner if available
+    const squadOwner = document.getElementById('squadOwner');
+    if (players.length && squadOwner) {
+        squadOwner.value = players[0].Owner;
+        renderSquadTable(players[0].Owner);
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    loadCSVAndRender();
+    setupEventListeners();
+    // No need to attach squadTable event listener here (already attached above)
+});
     </script>
 </body>
 </html>
