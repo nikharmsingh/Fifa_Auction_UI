@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sasta Fifa Auction Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #181c24 0%, #23272f 100%);
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 80% 10%, #39ff1422 0%, transparent 60%),
+                        radial-gradient(circle at 10% 90%, #3a86ff22 0%, transparent 60%),
+                        repeating-linear-gradient(120deg, transparent, transparent 40px, #232a34 42px, transparent 44px),
+                        repeating-linear-gradient(60deg, transparent, transparent 60px, #232a34 62px, transparent 64px);
+            opacity: 0.18;
+            pointer-events: none;
+            z-index: 0;
+            animation: bgmove 12s linear infinite alternate;
+        }
+        @keyframes bgmove {
+            0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+            100% { background-position: 40px 40px, 60px 60px, 20px 20px, 30px 30px; }
+        }
+        .header {
+            background: rgba(24,28,36,0.95);
+            color: #fff;
+            padding: 38px 0 22px 0;
+            text-align: center;
+            border-bottom-left-radius: 32px;
+            border-bottom-right-radius: 32px;
+            box-shadow: 0 4px 32px 0 #39ff1440;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        .header .material-icons {
+            font-size: 3.4em;
+            vertical-align: middle;
+            margin-right: 12px;
+            color: #39ff14;
+            filter: drop-shadow(0 0 8px #39ff14aa);
+        }
+        .header h1 {
+            display: inline-block;
+            font-size: 2.8em;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 16px #00ff4133, 0 0 2px #39ff14;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin: 0 0 32px 0;
+            position: sticky;
+            top: 90px;
+            z-index: 9;
+            background: rgba(24,28,36,0.85);
+            backdrop-filter: blur(2px);
+            border-bottom: 1.5px solid #232a34;
+        }
+        .nav-btn {
+            background: linear-gradient(90deg, #232a34 60%, #232a34cc 100%);
+            border: none;
+            color: #39ff14;
+            font-size: 1.18em;
+            font-weight: 900;
+            padding: 14px 38px;
+            border-radius: 12px 12px 0 0;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            outline: none;
+            letter-spacing: 1.2px;
+            box-shadow: 0 2px 8px #39ff1422;
+        }
+        .nav-btn.active, .nav-btn:hover {
+            background: linear-gradient(90deg, #39ff14 0%, #00ff41 100%);
+            color: #181c24;
+            box-shadow: 0 4px 24px #39ff1444;
+        }
+        .container {
+            max-width: 1240px;
+            margin: 0 auto 0 auto;
+            background: rgba(24,28,36,0.92);
+            border-radius: 22px;
+            box-shadow: 0 4px 32px #39ff1422;
+            padding: 40px 32px 32px 32px;
+            position: relative;
+            top: -30px;
+            min-height: 600px;
+            backdrop-filter: blur(2px);
+        }
+        .summary {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-bottom: 36px;
+            gap: 24px;
+        }
+        .card {
+            background: linear-gradient(135deg, #232a34 60%, #232a34cc 100%);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #39ff1444, 0 1.5px 8px #232a34cc;
+            padding: 32px 48px 24px 48px;
+            margin: 0 0 10px 0;
+            min-width: 200px;
+            text-align: center;
+            transition: transform 0.18s, box-shadow 0.18s, border 0.18s;
+            position: relative;
+            overflow: hidden;
+            border: 2.5px solid #232a34;
+            backdrop-filter: blur(1.5px);
+        }
+        .card:hover {
+            transform: translateY(-8px) scale(1.045);
+            box-shadow: 0 8px 32px #39ff1444, 0 2px 16px #00ff4133;
+            border: 2.5px solid #39ff14;
+        }
+        .card .material-icons {
+            font-size: 2.5em;
+            color: #39ff14;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 8px #39ff14aa);
+        }
+        .card h2 {
+            margin: 0 0 8px 0;
+            font-size: 2.3em;
+            color: #fff;
+            text-shadow: 0 2px 12px #00ff4133, 0 0 2px #39ff14;
+        }
+        .card p {
+            margin: 0;
+            color: #b6c6e3;
+            font-size: 1.15em;
+        }
+        .filters label {
+            font-weight: 600;
+            color: #39ff14;
+        }
+        .filters select, .filters input {
+            background: #232a34;
+            color: #fff;
+            border: 1.5px solid #39ff14;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 1.08em;
+        }
+        .filters select:focus, .filters input:focus {
+            border: 1.5px solid #39ff14;
+            outline: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: rgba(35,42,52,0.98);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 16px #39ff1411;
+            margin-bottom: 18px;
+        }
+        th, td {
+            padding: 16px 12px;
+            border-bottom: 1.5px solid #39ff1422;
+            text-align: left;
+        }
+        th {
+            background: #181c24;
+            cursor: pointer;
+            color: #39ff14;
+            font-weight: 900;
+            font-size: 1.13em;
+            user-select: none;
+            letter-spacing: 1.2px;
+            border-bottom: 2.5px solid #39ff14;
+        }
+        tr:nth-child(even) td {
+            background: #232a34cc;
+        }
+        tr:nth-child(odd) td {
+            background: #181c24cc;
+        }
+        tr:hover td {
+            background: #39ff1422;
+            transition: background 0.18s;
+        }
+        td {
+            font-size: 1.08em;
+        }
+        .owner-select {
+            background: #232a34;
+            color: #39ff14;
+            border: 2px solid #39ff14;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1.15em;
+            margin-bottom: 22px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px #39ff1422;
+        }
+        .owner-select:focus {
+            border: 2px solid #39ff14;
+            outline: none;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 36px;
+            justify-content: space-around;
+            margin: 36px 0 0 0;
+        }
+        .chart-card {
+            background: linear-gradient(135deg, #232a34 60%, #232a34cc 100%);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #39ff1444, 0 1.5px 8px #232a34cc;
+            padding: 28px 18px 18px 18px;
+            min-width: 320px;
+            max-width: 420px;
+            flex: 1 1 320px;
+            text-align: center;
+            border: 2.5px solid #232a34;
+            transition: border 0.18s, box-shadow 0.18s;
+            backdrop-filter: blur(1.5px);
+        }
+        .chart-card h3 {
+            color: #39ff14;
+            margin-bottom: 12px;
+            font-size: 1.18em;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            text-shadow: 0 2px 8px #00ff4133;
+        }
+        .chart-card:hover {
+            border: 2.5px solid #39ff14;
+            box-shadow: 0 8px 32px #39ff1444, 0 2px 16px #00ff4133;
+        }
+        .player-img {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2.5px solid #39ff1444;
+            background: #181c24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.1em;
+            font-weight: 800;
+            color: #39ff14;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #39ff1422;
+        }
+        .player-img img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
+        .initials-avatar {
+            background: #232a34;
+            border: 2.5px solid #39ff14;
+            text-transform: uppercase;
+            font-size: 2.1em;
+            font-weight: 800;
+            color: #39ff14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px #39ff1422;
+        }
+        @media (max-width: 1100px) {
+            .summary { flex-direction: column; align-items: center; }
+            .card { width: 95%; }
+            .container { padding: 18px 2vw; }
+            .charts { flex-direction: column; align-items: center; }
+        }
+        @media (max-width: 700px) {
+            .header h1 { font-size: 1.5em; }
+            .container { padding: 8px 1vw; }
+            .card { padding: 18px 8px; }
+            .chart-card { min-width: 90vw; max-width: 98vw; }
+            th, td { padding: 8px 4px; font-size: 0.98em; }
+            .player-img { width: 44px; height: 44px; font-size: 1.2em; }
+        }
+        .footer {
+            text-align: center;
+            color: #b6c6e3;
+            font-size: 1.08em;
+            margin: 38px 0 16px 0;
+            letter-spacing: 0.7px;
+            opacity: 0.85;
+        }
+        .hidden { display: none !important; }
+        /* Neon green button for future use */
+        .btn-green {
+            background: linear-gradient(90deg, #39ff14 0%, #00ff41 100%);
+            color: #181c24;
+            font-weight: 900;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 32px;
+            font-size: 1.15em;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #39ff1444;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+        }
+        .btn-green:hover {
+            background: linear-gradient(90deg, #00ff41 0%, #39ff14 100%);
+            color: #181c24;
+            box-shadow: 0 4px 24px #39ff1444;
+        }
+    </style>
+    <!-- PapaParse CDN for CSV parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header">
+        <span class="material-icons">sports_soccer</span>
+        <h1>Sasta Fifa Auction Dashboard</h1>
+    </div>
+    <div class="nav">
+        <button class="nav-btn active" id="auctionTab">Auction Results</button>
+        <button class="nav-btn" id="squadTab">Squad Details</button>
+        <button class="nav-btn" id="chartsTab">Charts</button>
+    </div>
+    <div class="container" id="auctionPage">
+        <div class="summary" id="summary-cards"></div>
+        <div class="summary" id="top-spenders"></div>
+        <div class="charts">
+            <div class="chart-card">
+                <h3>Spend per Owner</h3>
+                <canvas id="spendChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Players per Owner</h3>
+                <canvas id="countChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Position Distribution</h3>
+                <canvas id="positionChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="container hidden" id="squadPage">
+        <div style="margin-bottom:18px;">
+            <label for="squadOwner" style="color:#39ff14;font-weight:800;">Select Owner:</label>
+            <select id="squadOwner" class="owner-select"></select>
+        </div>
+        <div style="overflow-x:auto;">
+            <table id="squadTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Player Name</th>
+                        <th>Rating</th>
+                        <th>Position</th>
+                        <th>Purchase Price</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container hidden" id="chartsPage">
+        <div class="charts">
+            <div class="chart-card">
+                <h3>Spend by Position</h3>
+                <canvas id="spendByPositionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Avg Price per Position</h3>
+                <canvas id="avgPriceByPositionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Owner Spend Distribution</h3>
+                <canvas id="ownerSpendDoughnut"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Top 5 Most Expensive Players</h3>
+                <canvas id="topPlayersChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        Made with <span class="material-icons" style="font-size:1.1em;color:#3a86ff;vertical-align:middle;">favorite</span> for Sasta Fifa Tournament &copy; 2025
+    </div>
+    <script>
+    let players = [];
+    let currentSortKey = '', currentSortDir = 1;
+    let spendChart, countChart, positionChart;
+
+    // --- EMBEDDED CSV DATA ---
+    const csvData = `Player Name,Rating,Position,Owner,Purchase Price,Status
+Erling Haaland,91,ST,Aditya,38,Sold
+Rodri,91,CDM,Aditya,6,Sold
+Mohamed Salah,89,RW,Aditya,4,Sold
+Yann Sommer,87,GK,Aditya,4.5,Sold
+Ter Stegen,89,GK,Aditya,3,Sold
+Joao Cancelo,87,RB,Aditya,3,Sold
+Jeremie Frimpong,84,RB,Aditya,0.5,Sold
+Pervis Estupinan,80,LB,Aditya,0.5,Sold
+Alex Grimaldo,82,LB,Aditya,1,Sold
+Alessandro Bastoni,87,CB,Aditya,8,Sold
+Dayot Upamecano,82,CB,Aditya,1.5,Sold
+Declan Rice,87,CDM,Aditya,2,Sold
+Federico Valverde,88,CM,Aditya,6,Sold
+Pedri,83,CM,Aditya,3,Sold
+Gavi,83,CM,Aditya,2.5,Sold
+Florian Wirtz,88,CAM,Aditya,1,Sold
+Brahim Diaz,82,CAM,Aditya,2,Sold
+Khvicha Kvaratskhelia,85,LW,Aditya,1.5,Sold
+Antony,58,RW,Aditya,0.5,Sold
+Moises Caicedo,82,CDM,Aditya,0.5,Sold
+Lucas Hernandez,83,CB,Aditya,2,Sold
+Benjamin Pavard,84,CB,Aditya,2,Sold
+David Alaba,85,CB,Aditya,5,Sold
+Lorenzo Pellegrini,83,CAM,Aditya,2,Sold
+Harry Kane,90,ST,AgentTrigger,38,Sold
+Luka Modric,86,CM,AgentTrigger,3,Sold
+Thibaut Courtois,89,GK,AgentTrigger,7,Sold
+Alisson,89,GK,AgentTrigger,9,Sold
+Jordi Alba,80,LB,AgentTrigger,3,Sold
+Ben Chilwell,79,LB,AgentTrigger,0.5,Sold
+Antonio Rudiger,88,CB,AgentTrigger,12,Sold
+Eder Militao,85,CB,AgentTrigger,3.5,Sold
+Milan Skriniar,81,CB,AgentTrigger,1,Sold
+Stefan de Vrij,83,CB,AgentTrigger,3.5,Sold
+Casemiro,89,CDM,AgentTrigger,1.5,Sold
+Bruno Fernandes,87,CAM,AgentTrigger,2,Sold
+Phil Foden,88,CAM,AgentTrigger,1.5,Sold
+Leon Goretzka,83,CM,AgentTrigger,0.5,Sold
+Marcus Rashford,81,LW,AgentTrigger,1,Sold
+Leroy Sane,85,LW,AgentTrigger,5,Sold
+Jack Grealish,84,LW,AgentTrigger,1.5,Sold
+Neymar,87,LW,AgentTrigger,3,Sold
+Sergio Ramos,78,CB,AgentTrigger,2.5,Sold
+Jesus Navas,83,RB,AgentTrigger,0.5,Sold
+Sergio Busquets,81,CDM,AgentTrigger,0.5,Sold
+Kylian Mbappe,91,ST,BeastModel,42.5,Sold
+Vinicius Junior,90,LW,BeastModel,8,Sold
+Gianluigi Donnarumma,89,GK,BeastModel,9,Sold
+Aaron Ramsdale,81,GK,BeastModel,1,Sold
+Kieran Trippier,83,RB,BeastModel,0.5,Sold
+Ferland Mendy,84,LB,BeastModel,0.5,Sold
+Luke Shaw,82,LB,BeastModel,1,Sold
+Marquinhos,87,CB,BeastModel,12,Sold
+Lisandro Martinez,84,CB,BeastModel,1,Sold
+Ibrahima Konate,83,CB,BeastModel,2,Sold
+Martin Odegaard,89,CAM,BeastModel,2,Sold
+Bernardo Silva,88,CAM,BeastModel,2.5,Sold
+Nicolo Barella,87,CM,BeastModel,3.5,Sold
+Frenkie de Jong,87,CM,BeastModel,3.5,Sold
+Riyad Mahrez,85,RW,BeastModel,0.5,Sold
+Jarrod Bowen,82,RW,BeastModel,4,Sold
+Dani Carvajal,85,RB,BeastModel,1,Sold
+Francesco Acerbi,84,CB,BeastModel,2.5,Sold
+Federico Dimarco,84,LB,BeastModel,1,Sold
+Denis Zakaria,79,CDM,BeastModel,0.5,Sold
+Mikel Merino,85,CM,BeastModel,1,Sold
+Ismael Bennacer,83,CM,BeastModel,0.5,Sold
+Kevin De Bruyne,90,CAM,Debraj,4.5,Sold
+Jude Bellingham,90,CM,Debraj,7,Sold
+Ederson,88,GK,Debraj,6,Sold
+Emi Martinez,84,GK,Debraj,0.5,Sold
+Achraf Hakimi,84,RB,Debraj,3.5,Sold
+Pedro Porro,82,RB,Debraj,0.5,Sold
+Theo Hernandez,87,LB,Debraj,4,Sold
+Alphonso Davies,82,LB,Debraj,3,Sold
+Raphael Varane,82,CB,Debraj,3.5,Sold
+Kalidou Koulibaly,84,CB,Debraj,4,Sold
+Kim Min-jae,86,CB,Debraj,5.5,Sold
+Aurelien Tchouameni,85,CDM,Debraj,1.5,Sold
+Christopher Nkunku,84,CAM,Debraj,1.5,Sold
+Bukayo Saka,87,RW,Debraj,4.5,Sold
+Rafael Leao,72,LW,Debraj,3,Sold
+Karim Benzema,86,ST,Debraj,16.5,Sold
+Victor Osimhen,87,ST,Debraj,4.5,Sold
+Darwin Nunez,82,ST,Debraj,0.5,Sold
+Romelu Lukaku,82,ST,Debraj,5,Sold
+Antoine Griezmann,88,CF,Debraj,5,Sold
+Cody Gakpo,83,LW,Debraj,4.5,Sold
+Serge Gnabry,82,RW,Debraj,0.5,Sold
+Sadio Mane,84,LW,Debraj,0.5,Sold
+Lionel Messi,88,RW,Debraj,8,Sold
+Leonardo Bonucci,64,CB,Debraj,0.5,Sold
+Presnel Kimpembe,81,CB,Debraj,0.5,Sold
+Virgil van Dijk,89,CB,Kartikeya,14.5,Sold
+Manuel Neuer,86,GK,Kartikeya,9,Sold
+Keylor Navas,87,GK,Kartikeya,1,Sold
+Wojciech Szczesny,85,GK,Kartikeya,1,Sold
+Trent Alexander-Arnold,86,RB,Kartikeya,2,Sold
+Kyle Walker,84,RB,Kartikeya,2,Sold
+Denzel Dumfries,82,RB,Kartikeya,0.5,Sold
+Nuno Mendes,82,LB,Kartikeya,2.5,Sold
+Jules Kounde,85,CB,Kartikeya,4.5,Sold
+Joshua Kimmich,86,CDM,Kartikeya,2.5,Sold
+Jamal Musiala,87,CAM,Kartikeya,2,Sold
+Marco Verratti,87,CM,Kartikeya,3,Sold
+Ilkay Gundogan,87,CM,Kartikeya,3.5,Sold
+Kingsley Coman,84,LW,Kartikeya,1,Sold
+Federico Chiesa,84,RW,Kartikeya,2,Sold
+Raphinha,82,RW,Kartikeya,2,Sold
+Lautaro Martinez,89,ST,Kartikeya,6,Sold
+Paulo Dybala,87,CF,Kartikeya,5,Sold
+Kai Havertz,83,CF,Kartikeya,7,Sold
+Eduardo Camavinga,83,CM,Kartikeya,1,Sold
+Sandro Tonali,85,CM,Kartikeya,1.5,Sold
+Thomas Muller,82,CAM,Kartikeya,0.5,Sold
+Cristiano Ronaldo,86,ST,Kartikeya,11.5,Sold
+Giorgio Chiellini,86,CB,Kartikeya,5,Sold
+Fabinho,85,CDM,Kartikeya,3,Sold
+N'Golo Kante,85,CDM,Kartikeya,2.5,Sold
+Hakan Calhanoglu,86,CM,Kartikeya,1.5,Sold
+Isco,66,CAM,Kartikeya,0.5,Sold
+Marco Asensio,81,CAM,Kartikeya,1.5,Sold
+Jan Oblak,88,GK,Nikhar,6,Sold
+Mike Maignan,87,GK,Nikhar,6,Sold
+Reece James,82,RB,Nikhar,0.5,Sold
+Benjamin Pavard,84,RB,Nikhar,1,Sold
+Andrew Robertson,85,LB,Nikhar,3,Sold
+Josko Gvardiol,83,LB,Nikhar,2,Sold
+Destiny Udogie,82,LB,Nikhar,1,Sold
+Ruben Dias,88,CB,Nikhar,12.5,Sold
+William Saliba,87,CB,Nikhar,11,Sold
+Matthijs de Ligt,84,CB,Nikhar,5.5,Sold
+Joao Palhinha,86,CDM,Nikhar,1,Sold
+Mason Mount,78,CM,Nikhar,0.5,Sold
+Sergej Milinkovic-Savic,85,CM,Nikhar,2,Sold
+Luis Diaz,84,LW,Nikhar,2,Sold
+Ousmane Dembele,86,RW,Nikhar,4,Sold
+Angel Di Maria,83,RW,Nikhar,0.5,Sold
+Robert Lewandowski,88,ST,Nikhar,30,Sold
+Dusan Vlahovic,84,ST,Nikhar,1,Sold
+Joao Felix,64,CF,Nikhar,4.5,Sold
+Ansu Fati,80,LW,Nikhar,1,Sold
+Dani Olmo,85,CAM,Nikhar,1.5,Sold
+Thiago Silva,67,CB,Nikhar,1,Sold
+Marc Cucurella,82,LB,Nikhar,1,Sold
+Franck Kessie,84,CM,Nikhar,1.5,Sold`;
+
+    // CSV parsing function
+    function parseCSV(data) {
+        const lines = data.trim().split('\n');
+        const headers = lines[0].split(',');
+        return lines.slice(1).map(line => {
+            const values = line.split(',');
+            let obj = {};
+            headers.forEach((h, i) => obj[h] = values[i]);
+            return obj;
+        });
+    }
+
+    // Summary calculations
+    function getSummary(players) {
+        const owners = {};
+        let totalSpend = 0;
+        players.forEach(p => {
+            const price = parseFloat(p['Purchase Price']) || 0;
+            totalSpend += price;
+            if (!owners[p.Owner]) owners[p.Owner] = { count: 0, spend: 0 };
+            owners[p.Owner].count++;
+            owners[p.Owner].spend += price;
+        });
+        return {
+            totalPlayers: players.length,
+            totalSpend,
+            owners: Object.keys(owners).map(owner => ({
+                name: owner,
+                count: owners[owner].count,
+                spend: owners[owner].spend
+            }))
+        };
+    }
+
+    // Render summary cards
+    function renderSummary() {
+        const summary = getSummary(players);
+        const summaryDiv = document.getElementById('summary-cards');
+        summaryDiv.innerHTML = `
+            <div class="card">
+                <span class="material-icons">groups</span>
+                <h2>${summary.totalPlayers}</h2>
+                <p>Total Players</p>
+            </div>
+            <div class="card">
+                <span class="material-icons">account_balance_wallet</span>
+                <h2>₹${summary.totalSpend.toLocaleString()}</h2>
+                <p>Total Spend</p>
+            </div>
+            <div class="card">
+                <span class="material-icons">person</span>
+                <h2>${summary.owners.length}</h2>
+                <p>Unique Owners</p>
+            </div>
+        `;
+    }
+
+    // Render top spenders
+    function renderTopSpenders() {
+        const summary = getSummary(players);
+        const top = summary.owners.sort((a,b)=>b.spend-a.spend).slice(0,3);
+        const topDiv = document.getElementById('top-spenders');
+        topDiv.innerHTML = top.map((owner, i) => `
+            <div class="card" style="min-width:220px;">
+                <span class="material-icons">military_tech</span>
+                <h2 style="color:#ffd700;">#${i+1} ${owner.name}</h2>
+                <p style="color:#fff;">Spent: <b>₹${owner.spend.toLocaleString()}</b><br>Players: ${owner.count}</p>
+            </div>
+        `).join('');
+    }
+
+    // Render charts
+    function renderCharts() {
+        const summary = getSummary(players);
+        // Spend per owner
+        const spendData = summary.owners.map(o => o.spend);
+        const countData = summary.owners.map(o => o.count);
+        const ownerLabels = summary.owners.map(o => o.name);
+        // Position distribution
+        const posMap = {};
+        players.forEach(p => {
+            posMap[p.Position] = (posMap[p.Position] || 0) + 1;
+        });
+        const posLabels = Object.keys(posMap);
+        const posCounts = posLabels.map(l => posMap[l]);
+        // Destroy old charts if exist
+        if (spendChart) spendChart.destroy();
+        if (countChart) countChart.destroy();
+        if (positionChart) positionChart.destroy();
+        // Spend per owner
+        spendChart = new Chart(document.getElementById('spendChart'), {
+            type: 'bar',
+            data: {
+                labels: ownerLabels,
+                datasets: [{
+                    label: 'Spend (₹)',
+                    data: spendData,
+                    backgroundColor: '#39ff14',
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } },
+            }
+        });
+        // Player count per owner
+        countChart = new Chart(document.getElementById('countChart'), {
+            type: 'bar',
+            data: {
+                labels: ownerLabels,
+                datasets: [{
+                    label: 'Players',
+                    data: countData,
+                    backgroundColor: '#b6c6e3',
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } },
+            }
+        });
+        // Position distribution
+        positionChart = new Chart(document.getElementById('positionChart'), {
+            type: 'pie',
+            data: {
+                labels: posLabels,
+                datasets: [{
+                    data: posCounts,
+                    backgroundColor: [
+                        '#39ff14', '#b6c6e3', '#fff', '#232a34', '#00ff41', '#3a86ff', '#6c757d', '#ffbe0b', '#fb5607', '#ff006e'
+                    ]
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: '#fff' } } }
+            }
+        });
+    }
+
+    // Render extra charts
+    function renderExtraCharts() {
+        // Spend by Position
+        const spendByPos = {};
+        players.forEach(p => {
+            const pos = p.Position;
+            const price = parseFloat(p['Purchase Price']) || 0;
+            spendByPos[pos] = (spendByPos[pos] || 0) + price;
+        });
+        const posLabels = Object.keys(spendByPos);
+        const spendVals = posLabels.map(l => spendByPos[l]);
+        if (window.spendByPositionChart && typeof window.spendByPositionChart.destroy === 'function') window.spendByPositionChart.destroy();
+        window.spendByPositionChart = new Chart(document.getElementById('spendByPositionChart'), {
+            type: 'bar',
+            data: {
+                labels: posLabels,
+                datasets: [{
+                    label: 'Total Spend (₹)',
+                    data: spendVals,
+                    backgroundColor: '#00ff41',
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } },
+            }
+        });
+        // Avg Price per Position
+        const posTotals = {}, posCounts = {};
+        players.forEach(p => {
+            const pos = p.Position;
+            const price = parseFloat(p['Purchase Price']) || 0;
+            posTotals[pos] = (posTotals[pos] || 0) + price;
+            posCounts[pos] = (posCounts[pos] || 0) + 1;
+        });
+        const avgVals = posLabels.map(l => posTotals[l] / posCounts[l]);
+        if (window.avgPriceByPositionChart && typeof window.avgPriceByPositionChart.destroy === 'function') window.avgPriceByPositionChart.destroy();
+        window.avgPriceByPositionChart = new Chart(document.getElementById('avgPriceByPositionChart'), {
+            type: 'bar',
+            data: {
+                labels: posLabels,
+                datasets: [{
+                    label: 'Avg Price (₹)',
+                    data: avgVals,
+                    backgroundColor: '#b6c6e3',
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } },
+            }
+        });
+        // Owner Spend Doughnut
+        const ownerSpend = {};
+        players.forEach(p => {
+            const owner = p.Owner;
+            const price = parseFloat(p['Purchase Price']) || 0;
+            ownerSpend[owner] = (ownerSpend[owner] || 0) + price;
+        });
+        const ownerLabels = Object.keys(ownerSpend);
+        const ownerVals = ownerLabels.map(l => ownerSpend[l]);
+        if (window.ownerSpendDoughnut && typeof window.ownerSpendDoughnut.destroy === 'function') window.ownerSpendDoughnut.destroy();
+        window.ownerSpendDoughnut = new Chart(document.getElementById('ownerSpendDoughnut'), {
+            type: 'doughnut',
+            data: {
+                labels: ownerLabels,
+                datasets: [{
+                    data: ownerVals,
+                    backgroundColor: [
+                        '#39ff14', '#00ff41', '#b6c6e3', '#fff', '#232a34', '#3a86ff', '#6c757d', '#ffbe0b', '#fb5607', '#ff006e'
+                    ]
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: '#fff' } }, tooltip: { enabled: true } }
+            }
+        });
+        // Top 5 Most Expensive Players
+        const topPlayers = players.slice().sort((a,b)=>parseFloat(b['Purchase Price'])-parseFloat(a['Purchase Price'])).slice(0,5);
+        const topNames = topPlayers.map(p=>p['Player Name']);
+        const topPrices = topPlayers.map(p=>parseFloat(p['Purchase Price']));
+        if (window.topPlayersChart && typeof window.topPlayersChart.destroy === 'function') window.topPlayersChart.destroy();
+        window.topPlayersChart = new Chart(document.getElementById('topPlayersChart'), {
+            type: 'bar',
+            data: {
+                labels: topNames,
+                datasets: [{
+                    label: 'Price (₹)',
+                    data: topPrices,
+                    backgroundColor: '#39ff14',
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } },
+            }
+        });
+    }
+
+    // Render squad details
+    function renderSquadOwnerList() {
+        const ownerSet = Array.from(new Set(players.map(p => p.Owner)));
+        const squadOwner = document.getElementById('squadOwner');
+        squadOwner.innerHTML = ownerSet.map(owner => `<option value="${owner}">${owner}</option>`).join('');
+    }
+    // --- EMBEDDED PLAYER IMAGE MAPPING ---
+    const playerImages = {
+        "Kalidou Koulibaly": "images/Kalidou_Koulibaly.jpg",
+        "Ibrahima Konate": "images/Ibrahima_Konate.jpg",
+        "Isco": "images/Isco.jpg",
+        "Kevin De Bruyne": "images/Kevin_De_Bruyne.jpg",
+        "Pedro Porro": "images/Pedro_Porro.jpg",
+        "Jude Bellingham": "images/Jude_Bellingham.jpg",
+        "Erling Haaland": "images/Erling_Haaland.jpg",
+        "Federico Valverde": "images/Federico_Valverde.jpg",
+        "Lisandro Martinez": "images/Lisandro_Martinez.jpg",
+        "Brahim Diaz": "images/Brahim_Diaz.jpg",
+        "Ruben Dias": "images/Ruben_Dias.jpg",
+        "Giorgio Chiellini": "images/Giorgio_Chiellini.jpg",
+        "Josko Gvardiol": "images/Josko_Gvardiol.jpg",
+        "Ferland Mendy": "images/Ferland_Mendy.jpg",
+        "Gianluigi Donnarumma": "images/Gianluigi_Donnarumma.jpg",
+        "Keylor Navas": "images/Keylor_Navas.jpg",
+        "Alisson": "images/Alisson.jpg",
+        "Marco Asensio": "images/Marco_Asensio.jpg",
+        "Yann Sommer": "images/Yann_Sommer.jpg",
+        "N'Golo Kante": "images/N_Golo_Kante.jpg",
+        "Nicolo Barella": "images/Nicolo_Barella.jpg",
+        "Romelu Lukaku": "images/Romelu_Lukaku.jpg",
+        "Leonardo Bonucci": "images/Leonardo_Bonucci.jpg",
+        "Ben Chilwell": "images/Ben_Chilwell.jpg",
+        "Denis Zakaria": "images/Denis_Zakaria.jpg",
+        "Reece James": "images/Reece_James.jpg",
+        "Fabinho": "images/Fabinho.jpg",
+        "Martin Odegaard": "images/Martin_Odegaard.jpg",
+        "Theo Hernandez": "images/Theo_Hernandez.jpg",
+        "Mikel Merino": "images/Mikel_Merino.jpg",
+        "Angel Di Maria": "images/Angel_Di_Maria.jpg",
+        "Jeremie Frimpong": "images/Jeremie_Frimpong.jpg",
+        "Gavi": "images/Gavi.jpg",
+        "Paulo Dybala": "images/Paulo_Dybala.jpg",
+        "Milan Skriniar": "images/Milan_Skriniar.jpg",
+        "Thomas Muller": "images/Thomas_Muller.jpg",
+        "Cristiano Ronaldo": "images/Cristiano_Ronaldo.jpg",
+        "Jarrod Bowen": "images/Jarrod_Bowen.jpg",
+        "Dani Olmo": "images/Dani_Olmo.jpg",
+        "Thiago Silva": "images/Thiago_Silva.jpg",
+        "Alphonso Davies": "images/Alphonso_Davies.jpg",
+        "Rafael Leao": "images/Rafael_Leao.jpg",
+        "Karim Benzema": "images/Karim_Benzema.jpg",
+        "Pedri": "images/Pedri.jpg",
+        "Casemiro": "images/Casemiro.jpg",
+        "Rodri": "images/Rodri.jpg",
+        "Eder Militao": "images/Eder_Militao.jpg",
+        "Destiny Udogie": "images/Destiny_Udogie.jpg",
+        "Thibaut Courtois": "images/Thibaut_Courtois.jpg",
+        "Antoine Griezmann": "images/Antoine_Griezmann.jpg",
+        "Dani Carvajal": "images/Dani_Carvajal.jpg",
+        "Riyad Mahrez": "images/Riyad_Mahrez.jpg",
+        "Sergej Milinkovic-Savic": "images/Sergej_Milinkovic-Savic.jpg",
+        "Sandro Tonali": "images/Sandro_Tonali.jpg",
+        "Emi Martinez": "images/Emi_Martinez.jpg",
+        "Ilkay Gundogan": "images/Ilkay_Gundogan.jpg",
+        "Marc Cucurella": "images/Marc_Cucurella.jpg",
+        "Nuno Mendes": "images/Nuno_Mendes.jpg",
+        "Kim Min-jae": "images/Kim_Min-jae.jpg",
+        "Harry Kane": "images/Harry_Kane.jpg",
+        "Kingsley Coman": "images/Kingsley_Coman.jpg",
+        "Khvicha Kvaratskhelia": "images/Khvicha_Kvaratskhelia.jpg",
+        "Ismael Bennacer": "images/Ismael_Bennacer.jpg",
+        "Benjamin Pavard": "images/Benjamin_Pavard.jpg",
+        "Dusan Vlahovic": "images/Dusan_Vlahovic.jpg",
+        "Eduardo Camavinga": "images/Eduardo_Camavinga.jpg",
+        "Sadio Mane": "images/Sadio_Mane.jpg",
+        "Frenkie de Jong": "images/Frenkie_de_Jong.jpg",
+        "Declan Rice": "images/Declan_Rice.jpg",
+        "Aurelien Tchouameni": "images/Aurelien_Tchouameni.jpg",
+        "Jan Oblak": "images/Jan_Oblak.jpg",
+        "Florian Wirtz": "images/Florian_Wirtz.jpg",
+        "Ousmane Dembele": "images/Ousmane_Dembele.jpg",
+        "Kai Havertz": "images/Kai_Havertz.jpg",
+        "Matthijs de Ligt": "images/Matthijs_de_Ligt.jpg",
+        "Francesco Acerbi": "images/Francesco_Acerbi.jpg",
+        "Luka Modric": "images/Luka_Modric.jpg",
+        "Christopher Nkunku": "images/Christopher_Nkunku.jpg",
+        "Andrew Robertson": "images/Andrew_Robertson.jpg",
+        "William Saliba": "images/William_Saliba.jpg",
+        "Wojciech Szczesny": "images/Wojciech_Szczesny.jpg",
+        "Luke Shaw": "images/Luke_Shaw.jpg",
+        "Manuel Neuer": "images/Manuel_Neuer.jpg",
+        "Ederson": "images/Ederson.jpg",
+        "Hakan Calhanoglu": "images/Hakan_Calhanoglu.jpg",
+        "Marquinhos": "images/Marquinhos.jpg",
+        "Franck Kessie": "images/Franck_Kessie.jpg",
+        "Leon Goretzka": "images/Leon_Goretzka.jpg",
+        "Vinicius Junior": "images/Vinicius_Junior.jpg",
+        "Jordi Alba": "images/Jordi_Alba.jpg",
+        "Bruno Fernandes": "images/Bruno_Fernandes.jpg",
+        "Federico Chiesa": "images/Federico_Chiesa.jpg",
+        "Ter Stegen": "images/Ter_Stegen.jpg",
+        "Joao Cancelo": "images/Joao_Cancelo.jpg",
+        "Jules Kounde": "images/Jules_Kounde.jpg",
+        "Antonio Rudiger": "images/Antonio_Rudiger.jpg",
+        "Mohamed Salah": "images/Mohamed_Salah.jpg",
+        "Neymar": "images/Neymar.jpg",
+        "Serge Gnabry": "images/Serge_Gnabry.jpg",
+        "Raphinha": "images/Raphinha.jpg",
+        "Kieran Trippier": "images/Kieran_Trippier.jpg",
+        "David Alaba": "images/David_Alaba.jpg",
+        "Leroy Sane": "images/Leroy_Sane.jpg",
+        "Aaron Ramsdale": "images/Aaron_Ramsdale.jpg",
+        "Kyle Walker": "images/Kyle_Walker.jpg",
+        "Marcus Rashford": "images/Marcus_Rashford.jpg",
+        "Achraf Hakimi": "images/Achraf_Hakimi.jpg",
+        "Jamal Musiala": "images/Jamal_Musiala.jpg",
+        "Sergio Ramos": "images/Sergio_Ramos.jpg",
+        "Cody Gakpo": "images/Cody_Gakpo.jpg",
+        "Presnel Kimpembe": "images/Presnel_Kimpembe.jpg",
+        "Joao Felix": "images/Joao_Felix.jpg",
+        "Robert Lewandowski": "images/Robert_Lewandowski.jpg",
+        "Bukayo Saka": "images/Bukayo_Saka.jpg",
+        "Joshua Kimmich": "images/Joshua_Kimmich.jpg",
+        "Lionel Messi": "images/Lionel_Messi.jpg",
+        "Alessandro Bastoni": "images/Alessandro_Bastoni.jpg",
+        "Alex Grimaldo": "images/Alex_Grimaldo.jpg",
+        "Kylian Mbappe": "images/Kylian_Mbappe.jpg",
+        "Lorenzo Pellegrini": "images/Lorenzo_Pellegrini.jpg",
+        "Ansu Fati": "images/Ansu_Fati.jpg",
+        "Mike Maignan": "images/Mike_Maignan.jpg",
+        "Jack Grealish": "images/Jack_Grealish.jpg",
+        "Moises Caicedo": "images/Moises_Caicedo.jpg",
+        "Dayot Upamecano": "images/Dayot_Upamecano.jpg",
+        "Federico Dimarco": "images/Federico_Dimarco.jpg",
+        "Darwin Nunez": "images/Darwin_Nunez.jpg",
+        "Denzel Dumfries": "images/Denzel_Dumfries.jpg",
+        "Trent Alexander-Arnold": "images/Trent_Alexander-Arnold.jpg",
+        "Phil Foden": "images/Phil_Foden.jpg",
+        "Sergio Busquets": "images/Sergio_Busquets.jpg",
+        "Mason Mount": "images/Mason_Mount.jpg",
+        "Lautaro Martinez": "images/Lautaro_Martinez.jpg",
+        "Jesus Navas": "images/Jesus_Navas.jpg",
+        "Victor Osimhen": "images/Victor_Osimhen.jpg",
+        "Antony": "images/Antony.jpg",
+        "Lucas Hernandez": "images/Lucas_Hernandez.jpg",
+        "Virgil van Dijk": "images/Virgil_van_Dijk.jpg",
+        "Bernardo Silva": "images/Bernardo_Silva.jpg",
+        "Stefan de Vrij": "images/Stefan_de_Vrij.jpg",
+        "Luis Diaz": "images/Luis_Diaz.jpg",
+        "Marco Verratti": "images/Marco_Verratti.jpg",
+        "Raphael Varane": "images/Raphael_Varane.jpg",
+        "Joao Palhinha": "images/Joao_Palhinha.jpg",
+        "Pervis Estupinan": "images/Pervis_Estupinan.jpg"
+    };
+    // Try to use _card.png if available, else fallback to .jpg, else avatar
+    function renderSquadTable(owner) {
+        const squad = players.filter(p => p.Owner === owner);
+        const tbody = document.querySelector('#squadTable tbody');
+        tbody.innerHTML = squad.map(p => {
+            const baseName = p['Player Name'];
+            let imgUrl = playerImages[baseName];
+            let showImage = false;
+            // Only show image if it's a local file (not an avatar URL)
+            if (imgUrl && !imgUrl.startsWith('https://ui-avatars.com/api/')) {
+                showImage = true;
+            } else {
+                imgUrl = '';
+            }
+            const initials = baseName.split(' ').map(w => w[0]).join('').toUpperCase();
+            return `
+            <tr>
+                <td>
+                    ${showImage ? `<img class="player-img" src="${imgUrl}" alt="Player">` : `<div class="player-img initials-avatar">${initials}</div>`}
+                </td>
+                <td>${p['Player Name']}</td>
+                <td>${p['Rating']}</td>
+                <td>${p['Position']}</td>
+                <td>₹${parseFloat(p['Purchase Price']).toLocaleString()}</td>
+            </tr>
+            `;
+        }).join('');
+    }
+    // Helper to check if image exists (synchronously, only works for local files)
+    function imageExists(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, false);
+        xhr.send();
+        return xhr.status === 200;
+    }
+
+    // Event listeners
+    function setupEventListeners() {
+        // Navigation
+        const auctionTab = document.getElementById('auctionTab');
+        const squadTab = document.getElementById('squadTab');
+        const chartsTab = document.getElementById('chartsTab');
+        const auctionPage = document.getElementById('auctionPage');
+        const squadPage = document.getElementById('squadPage');
+        const chartsPage = document.getElementById('chartsPage');
+        const squadOwner = document.getElementById('squadOwner');
+
+        if (auctionTab) {
+            auctionTab.onclick = function() {
+                console.log('Auction tab clicked');
+                if (auctionPage) auctionPage.classList.remove('hidden');
+                if (squadPage) squadPage.classList.add('hidden');
+                if (chartsPage) chartsPage.classList.add('hidden');
+                this.classList.add('active');
+                if (squadTab) squadTab.classList.remove('active');
+                if (chartsTab) chartsTab.classList.remove('active');
+            };
+        }
+
+        if (squadTab) {
+            squadTab.onclick = function() {
+                console.log('Squad tab clicked');
+                if (auctionPage) auctionPage.classList.add('hidden');
+                if (squadPage) squadPage.classList.remove('hidden');
+                if (chartsPage) chartsPage.classList.add('hidden');
+                this.classList.add('active');
+                if (auctionTab) auctionTab.classList.remove('active');
+                if (chartsTab) chartsTab.classList.remove('active');
+                // Always refresh owner list and squad table
+                renderSquadOwnerList();
+                const owner = (squadOwner && squadOwner.value) || players[0]?.Owner || '';
+                renderSquadTable(owner);
+            };
+        }
+
+        if (chartsTab) {
+            chartsTab.onclick = function() {
+                console.log('Charts tab clicked');
+                if (auctionPage) auctionPage.classList.add('hidden');
+                if (squadPage) squadPage.classList.add('hidden');
+                if (chartsPage) chartsPage.classList.remove('hidden');
+                this.classList.add('active');
+                if (auctionTab) auctionTab.classList.remove('active');
+                if (squadTab) squadTab.classList.remove('active');
+                // Always refresh extra charts
+                renderExtraCharts();
+            };
+        }
+
+        // Squad owner select
+        if (squadOwner) {
+            squadOwner.addEventListener('change', function() {
+                renderSquadTable(this.value);
+            });
+        }
+    }
+
+    // Fetch and parse CSV, then render dashboard
+    function loadCSVAndRender() {
+        players = parseCSV(csvData);
+        renderSummary();
+        renderTopSpenders();
+        renderCharts();
+        renderSquadOwnerList();
+        renderSquadTable(players[0]?.Owner || '');
+        renderExtraCharts();
+        // Do NOT call setupEventListeners here
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCSVAndRender();
+        setupEventListeners();
+    });
+    </script>
+</body>
+</html>

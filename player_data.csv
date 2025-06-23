@@ -1,0 +1,147 @@
+Player Name,Rating,Position,Owner,Purchase Price,Status
+Erling Haaland,91,ST,Aditya,38,Sold
+Rodri,91,CDM,Aditya,6,Sold
+Mohamed Salah,89,RW,Aditya,4,Sold
+Yann Sommer,87,GK,Aditya,4.5,Sold
+Ter Stegen,89,GK,Aditya,3,Sold
+Joao Cancelo,87,RB,Aditya,3,Sold
+Jeremie Frimpong,84,RB,Aditya,0.5,Sold
+Pervis Estupinan,80,LB,Aditya,0.5,Sold
+Alex Grimaldo,82,LB,Aditya,1,Sold
+Alessandro Bastoni,87,CB,Aditya,8,Sold
+Dayot Upamecano,82,CB,Aditya,1.5,Sold
+Declan Rice,87,CDM,Aditya,2,Sold
+Federico Valverde,88,CM,Aditya,6,Sold
+Pedri,83,CM,Aditya,3,Sold
+Gavi,83,CM,Aditya,2.5,Sold
+Florian Wirtz,88,CAM,Aditya,1,Sold
+Brahim Diaz,82,CAM,Aditya,2,Sold
+Khvicha Kvaratskhelia,85,LW,Aditya,1.5,Sold
+Antony,58,RW,Aditya,0.5,Sold
+Moises Caicedo,82,CDM,Aditya,0.5,Sold
+Lucas Hernandez,83,CB,Aditya,2,Sold
+Benjamin Pavard,84,CB,Aditya,2,Sold
+David Alaba,85,CB,Aditya,5,Sold
+Lorenzo Pellegrini,83,CAM,Aditya,2,Sold
+Harry Kane,90,ST,AgentTrigger,38,Sold
+Luka Modric,86,CM,AgentTrigger,3,Sold
+Thibaut Courtois,89,GK,AgentTrigger,7,Sold
+Alisson,89,GK,AgentTrigger,9,Sold
+Jordi Alba,80,LB,AgentTrigger,3,Sold
+Ben Chilwell,79,LB,AgentTrigger,0.5,Sold
+Antonio Rudiger,88,CB,AgentTrigger,12,Sold
+Eder Militao,85,CB,AgentTrigger,3.5,Sold
+Milan Skriniar,81,CB,AgentTrigger,1,Sold
+Stefan de Vrij,83,CB,AgentTrigger,3.5,Sold
+Casemiro,89,CDM,AgentTrigger,1.5,Sold
+Bruno Fernandes,87,CAM,AgentTrigger,2,Sold
+Phil Foden,88,CAM,AgentTrigger,1.5,Sold
+Leon Goretzka,83,CM,AgentTrigger,0.5,Sold
+Marcus Rashford,81,LW,AgentTrigger,1,Sold
+Leroy Sane,85,LW,AgentTrigger,5,Sold
+Jack Grealish,84,LW,AgentTrigger,1.5,Sold
+Neymar,87,LW,AgentTrigger,3,Sold
+Sergio Ramos,78,CB,AgentTrigger,2.5,Sold
+Jesus Navas,83,RB,AgentTrigger,0.5,Sold
+Sergio Busquets,81,CDM,AgentTrigger,0.5,Sold
+Kylian Mbappe,91,ST,BeastModel,42.5,Sold
+Vinicius Junior,90,LW,BeastModel,8,Sold
+Gianluigi Donnarumma,89,GK,BeastModel,9,Sold
+Aaron Ramsdale,81,GK,BeastModel,1,Sold
+Kieran Trippier,83,RB,BeastModel,0.5,Sold
+Ferland Mendy,84,LB,BeastModel,0.5,Sold
+Luke Shaw,82,LB,BeastModel,1,Sold
+Marquinhos,87,CB,BeastModel,12,Sold
+Lisandro Martinez,84,CB,BeastModel,1,Sold
+Ibrahima Konate,83,CB,BeastModel,2,Sold
+Martin Odegaard,89,CAM,BeastModel,2,Sold
+Bernardo Silva,88,CAM,BeastModel,2.5,Sold
+Nicolo Barella,87,CM,BeastModel,3.5,Sold
+Frenkie de Jong,87,CM,BeastModel,3.5,Sold
+Riyad Mahrez,85,RW,BeastModel,0.5,Sold
+Jarrod Bowen,82,RW,BeastModel,4,Sold
+Dani Carvajal,85,RB,BeastModel,1,Sold
+Francesco Acerbi,84,CB,BeastModel,2.5,Sold
+Federico Dimarco,84,LB,BeastModel,1,Sold
+Denis Zakaria,79,CDM,BeastModel,0.5,Sold
+Mikel Merino,85,CM,BeastModel,1,Sold
+Ismael Bennacer,83,CM,BeastModel,0.5,Sold
+Kevin De Bruyne,90,CAM,Debraj,4.5,Sold
+Jude Bellingham,90,CM,Debraj,7,Sold
+Ederson,88,GK,Debraj,6,Sold
+Emi Martinez,84,GK,Debraj,0.5,Sold
+Achraf Hakimi,84,RB,Debraj,3.5,Sold
+Pedro Porro,82,RB,Debraj,0.5,Sold
+Theo Hernandez,87,LB,Debraj,4,Sold
+Alphonso Davies,82,LB,Debraj,3,Sold
+Raphael Varane,82,CB,Debraj,3.5,Sold
+Kalidou Koulibaly,84,CB,Debraj,4,Sold
+Kim Min-jae,86,CB,Debraj,5.5,Sold
+Aurelien Tchouameni,85,CDM,Debraj,1.5,Sold
+Christopher Nkunku,84,CAM,Debraj,1.5,Sold
+Bukayo Saka,87,RW,Debraj,4.5,Sold
+Rafael Leao,72,LW,Debraj,3,Sold
+Karim Benzema,86,ST,Debraj,16.5,Sold
+Victor Osimhen,87,ST,Debraj,4.5,Sold
+Darwin Nunez,82,ST,Debraj,0.5,Sold
+Romelu Lukaku,82,ST,Debraj,5,Sold
+Antoine Griezmann,88,CF,Debraj,5,Sold
+Cody Gakpo,83,LW,Debraj,4.5,Sold
+Serge Gnabry,82,RW,Debraj,0.5,Sold
+Sadio Mane,84,LW,Debraj,0.5,Sold
+Lionel Messi,88,RW,Debraj,8,Sold
+Leonardo Bonucci,64,CB,Debraj,0.5,Sold
+Presnel Kimpembe,81,CB,Debraj,0.5,Sold
+Virgil van Dijk,89,CB,Kartikeya,14.5,Sold
+Manuel Neuer,86,GK,Kartikeya,9,Sold
+Keylor Navas,87,GK,Kartikeya,1,Sold
+Wojciech Szczesny,85,GK,Kartikeya,1,Sold
+Trent Alexander-Arnold,86,RB,Kartikeya,2,Sold
+Kyle Walker,84,RB,Kartikeya,2,Sold
+Denzel Dumfries,82,RB,Kartikeya,0.5,Sold
+Nuno Mendes,82,LB,Kartikeya,2.5,Sold
+Jules Kounde,85,CB,Kartikeya,4.5,Sold
+Joshua Kimmich,86,CDM,Kartikeya,2.5,Sold
+Jamal Musiala,87,CAM,Kartikeya,2,Sold
+Marco Verratti,87,CM,Kartikeya,3,Sold
+Ilkay Gundogan,87,CM,Kartikeya,3.5,Sold
+Kingsley Coman,84,LW,Kartikeya,1,Sold
+Federico Chiesa,84,RW,Kartikeya,2,Sold
+Raphinha,82,RW,Kartikeya,2,Sold
+Lautaro Martinez,89,ST,Kartikeya,6,Sold
+Paulo Dybala,87,CF,Kartikeya,5,Sold
+Kai Havertz,83,CF,Kartikeya,7,Sold
+Eduardo Camavinga,83,CM,Kartikeya,1,Sold
+Sandro Tonali,85,CM,Kartikeya,1.5,Sold
+Thomas Muller,82,CAM,Kartikeya,0.5,Sold
+Cristiano Ronaldo,86,ST,Kartikeya,11.5,Sold
+Giorgio Chiellini,86,CB,Kartikeya,5,Sold
+Fabinho,85,CDM,Kartikeya,3,Sold
+N'Golo Kante,85,CDM,Kartikeya,2.5,Sold
+Hakan Calhanoglu,86,CM,Kartikeya,1.5,Sold
+Isco,66,CAM,Kartikeya,0.5,Sold
+Marco Asensio,81,CAM,Kartikeya,1.5,Sold
+Jan Oblak,88,GK,Nikhar,6,Sold
+Mike Maignan,87,GK,Nikhar,6,Sold
+Reece James,82,RB,Nikhar,0.5,Sold
+Benjamin Pavard,84,RB,Nikhar,1,Sold
+Andrew Robertson,85,LB,Nikhar,3,Sold
+Josko Gvardiol,83,LB,Nikhar,2,Sold
+Destiny Udogie,82,LB,Nikhar,1,Sold
+Ruben Dias,88,CB,Nikhar,12.5,Sold
+William Saliba,87,CB,Nikhar,11,Sold
+Matthijs de Ligt,84,CB,Nikhar,5.5,Sold
+Joao Palhinha,86,CDM,Nikhar,1,Sold
+Mason Mount,78,CM,Nikhar,0.5,Sold
+Sergej Milinkovic-Savic,85,CM,Nikhar,2,Sold
+Luis Diaz,84,LW,Nikhar,2,Sold
+Ousmane Dembele,86,RW,Nikhar,4,Sold
+Angel Di Maria,83,RW,Nikhar,0.5,Sold
+Robert Lewandowski,88,ST,Nikhar,30,Sold
+Dusan Vlahovic,84,ST,Nikhar,1,Sold
+Joao Felix,64,CF,Nikhar,4.5,Sold
+Ansu Fati,80,LW,Nikhar,1,Sold
+Dani Olmo,85,CAM,Nikhar,1.5,Sold
+Thiago Silva,67,CB,Nikhar,1,Sold
+Marc Cucurella,82,LB,Nikhar,1,Sold
+Franck Kessie,84,CM,Nikhar,1.5,Sold
